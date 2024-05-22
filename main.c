@@ -33,11 +33,8 @@ typedef struct nodec {
     struct nodec* next;
 } nodeC;
 
-
-
 typedef nodeP* productNode;
 typedef nodeC* customerNode;
-
 
 void bumperProgram();
 void printMenu();
@@ -55,6 +52,7 @@ int generateKodeTransaksi(customerNode head);
 void helpMenu();
 void saveToFileCustomer(customerNode head);
 void saveToFileProduct(productNode head);
+nodeP *sortingProduct(productNode head, bool ascending, int select);
 
 int main() {
     // Definisikan
@@ -81,6 +79,7 @@ int main() {
     int tempHargaArr[99];
     int tempStockArr[99];
     char tempKodeProdukArr[99][100];
+    int secChoice;
 
     bumperProgram();
     system("cls");
@@ -125,7 +124,7 @@ int main() {
                 }
 
                 printf("Data stok produk: \n");
-                printTabelProduk(product, 2); // mode selain 1 akan memprint semuanya
+                printTabelProduk(product, 2); // mode memprint semua baris
                 printf("Nama produk yang ingin dihapus: ");
                 scanf("%s", tempNama);
                 system("cls");
@@ -135,7 +134,7 @@ int main() {
                     printf("Data Tidak Ditemukan!\n");
                 } 
                 else {
-                    printTabelProduk(tempProduct, 1);
+                    printTabelProduk(tempProduct, 1); // memprint baris pertama saja
                     printf("Apakah benar data tersebut yang ingin dihapus? \n1. Ya\n2. Tidak \nInput: ");
                     scanf("%d", &selectInt);
                     if(selectInt == 1){
@@ -149,7 +148,8 @@ int main() {
             case 3: // Catat Penjualan
                 counter = 0;
                 do{
-                    printf("============= Input Penjualan =============\n");
+                    printTabelProduk(product, 3); //mode 3 hanya akan memprint kolom 2 dan 3 saja
+                    printf("\n============= Input Penjualan =============\n");
                     printf("Kode produk yang dibeli: ");
                     scanf("%s", tempKodeProduk);
                     tempProduct = searchProduct(product, tempKodeProduk, 2);  // Mode 2 untuk mencari berdasarkan kode produk
@@ -189,7 +189,7 @@ int main() {
                     system("cls");
                     break;
                 }
-                printf("Mencari Berdsasarkan: \n1.Nama \n2.Kode Produk");
+                printf("Mencari Berdsasarkan: \n1.Nama \n2.Kode Produk \nInput: ");
                 scanf("%d", &select);
                 if(select == 1)
                 {
@@ -198,22 +198,30 @@ int main() {
                     tempProduct = searchProduct(product, tempNama, 1);     // Mode 1 untuk mencari berdasarkan nama
                     if(tempProduct != NULL)
                     {
-                        printTabelProduk(tempProduct, 1);  //mode selain 1 akan memprint semuanya
+                        printTabelProduk(tempProduct, 1);  //mode 1 akan memprint semua baris
                         printf("Produk Ditemukan!\n");
                     } else {
                         printf("Produk Tidak Ditemukan!\n");
                     }
                     system("pause");
                     system("cls");
-                break;
+                    break;
                 } else if (select == 2){
                     printf("Kode produk yang ingin dicari: ");
                     scanf("%s", tempKodeProduk);
                     tempProduct = searchProduct(product, tempKodeProduk, 2);     // Mode 2 untuk mencari berdasarkan kode
+                    if(tempProduct != NULL)
+                    {
+                        printTabelProduk(tempProduct, 1); // mode 1 akan memprint baris
+                        printf("Produk Ditemukan!\n");
+                    } else {
+                        printf("Produk Tidak Ditemukan!\n");
+                    }
+                    system("pause");
+                    system("cls");
+                    break;
                 }
                 
-                
-
             case 5: // Laporan Produk saat ini
                 if(product == NULL)
                 {
@@ -222,7 +230,26 @@ int main() {
                     system("cls");
                     break;
                 }
-                printTabelProduk(product, 2);   // Mode selain 1 akan memprint semuanya
+                printTabelProduk(product, 2);   // Mode 2 akan memprint semuanya
+                printf("Apakah ingin diurutkan (y/n) ?");
+                scanf("%s", selectChar);
+                if(strcasecmp(selectChar, "y") == 0)
+                {
+                    system("cls");
+                    printf("Mengurutkan berdasarkan: \n1. Nama \n2. Harga Kursi\n3. Stock \nInput: ");
+                    scanf("%d", &select);
+                    printf("Mengurutkan secara: \n1. Ascending \n2. Descending\nInput: ");
+                    scanf("%d", &secChoice);
+                    if(secChoice == 1){
+                        product = sortingProduct(product, true, select);
+                    } else if(secChoice == 2){
+                        product = sortingProduct(product, false, select);
+                    } else {
+                        printf("Invalid Input");}
+                    system("cls");
+                    printTabelProduk(product, 2);   // Mode 2 akan memprint semuanya
+                }
+                
                 printf("Apakah ingin kamu simpan ke dalam file (y/n)? ");
                 scanf("%s", selectChar);
                 if(strcasecmp(selectChar, "y") == 0)
@@ -277,6 +304,59 @@ int main() {
     return 0;
 }
 
+nodeP* sortingProduct(productNode head, bool ascending, int select)     // Sorting Product Menggunakan insertion
+{
+    productNode sorted = NULL;
+    productNode current = head;
+
+    while (current != NULL) {
+        productNode next = current->next;
+
+        if (select == 1) {  // Berdasarkan nama
+            if (sorted == NULL || (ascending ? strcasecmp(current->nama, sorted->nama) < 0 : strcasecmp(current->nama, sorted->nama) > 0)) {
+                current->next = sorted;
+                sorted = current;
+            } else {
+                productNode temp = sorted;
+                while (temp->next != NULL && (ascending ? strcasecmp(temp->next->nama, current->nama) < 0 : strcasecmp(temp->next->nama, current->nama) > 0)) {
+                    temp = temp->next;
+                }
+                current->next = temp->next;
+                temp->next = current;
+            }
+        } else if(select == 2){ // Berdasarkan harga
+            if (sorted == NULL || (ascending ? current->harga < sorted->harga : current->harga > sorted->harga)) {
+                current->next = sorted;
+                sorted = current;
+            } else {
+                productNode temp = sorted;
+                while (temp->next != NULL && (ascending ? temp->next->harga < current->harga : temp->next->harga > current->harga)) {
+                    temp = temp->next;
+                }
+                current->next = temp->next;
+                temp->next = current;
+            }
+        } else if(select == 3) { //Berdasarkan stock
+            if (sorted == NULL || (ascending ? current->stock < sorted->stock : current->stock > sorted->stock)) {
+                current->next = sorted;
+                sorted = current;
+            } else {
+                productNode temp = sorted;
+                while (temp->next != NULL && (ascending ? temp->next->stock < current->stock : temp->next->stock > current->stock)) {
+                    temp = temp->next;
+                }
+                current->next = temp->next;
+                temp->next = current;
+                }
+        } else {
+            printf("Terdapat salah input pada mode!\n");
+        }
+        current = next;
+    }
+
+    return sorted;
+}
+
 void saveToFileProduct(productNode head) {
     FILE *file = fopen("laporan_produk.txt", "w");
     if (file == NULL) {
@@ -303,7 +383,6 @@ void saveToFileProduct(productNode head) {
     fclose(file);
 }
 
-
 void saveToFileCustomer(customerNode head) {
     FILE *file = fopen("laporan_penjualan.txt", "w");
     if (file == NULL) {
@@ -312,9 +391,9 @@ void saveToFileCustomer(customerNode head) {
     }
 
     fprintf(file, "=================================================================================================\n");
-    fprintf(file, "|                                  LAPORAN PENJUALAN                                             |\n");
+    fprintf(file, "|                                  LAPORAN PENJUALAN                                            |\n");
     fprintf(file, "=================================================================================================\n");
-    fprintf(file, "| %-20s | %-20s | %-20s | %-20s |\n", "Kode Transaksi", "Waktu Transaksi", "Nama Produk", "Total Harga");
+    fprintf(file, "| %-21s | %-21s | %-21s | %-21s |\n", "Kode Transaksi", "Waktu Transaksi", "Nama Produk", "Total Harga");
     fprintf(file, "=================================================================================================\n");
 
     customerNode cursor = head;
@@ -322,12 +401,12 @@ void saveToFileCustomer(customerNode head) {
         // Menampilkan informasi transaksi ke dalam file
         for (int i = 0; i < cursor->counterProduk; i++) {
             float tempHargaTotalPcs = cursor->belanja[i]->totalHargaPerPcs / 1000;
-            fprintf(file, "| %-20d | %-20s | %-20s | Rp%-18.3f |\n", cursor->kodeTransaksi, cursor->waktuTransaksi, cursor->belanja[i]->namaProduk, tempHargaTotalPcs);
+            fprintf(file, "| %-21d | %-21s | %-21s | Rp%-19.3f |\n", cursor->kodeTransaksi, cursor->waktuTransaksi, cursor->belanja[i]->namaProduk, tempHargaTotalPcs);
         }
         // Menampilkan total harga transaksi
         float tempTotalHarga = cursor->totalHarga / 1000;
         fprintf(file, "-----------------------------------------------------------------------------------------------\n");
-        fprintf(file, "| %-72s | Rp%-18.3f |\n", "Total Harga Transaksi:", tempTotalHarga);
+        fprintf(file, "| %-7s | Rp%-18.3f |\n", "Total Harga Transaksi:", tempTotalHarga);
         fprintf(file, "=================================================================================================\n");
 
         cursor = cursor->next;
@@ -399,7 +478,7 @@ void printTabelPenjualan(customerNode head)
 {
     int i;
     customerNode cursor = head;
-
+    
     while(cursor != NULL)
     {
         // Menghitung total harga dalam format float
@@ -705,6 +784,7 @@ nodeP* searchProduct(productNode head, char* nama, int mode)
     return NULL;
 }
 
+
 nodeP* createLinkedListProduct(productNode head, char* nama, char* kategori, int harga, int stock, char* kodeProduk) {
     // Mengalokasikan memori untuk node baru
     nodeP* new_node = (nodeP*)malloc(sizeof(nodeP));
@@ -729,22 +809,41 @@ nodeP* createLinkedListProduct(productNode head, char* nama, char* kategori, int
 void printTabelProduk(productNode head, int mode) {
     productNode cursor = head;
     float tempHarga;
-    printf("=====================================================================================\n");
-    printf("| %-15s | %-15s | %-17s | %-10s | %-12s |\n", "Nama Produk", "Kategori", "Harga (satuan)", "Stock", "Kode Produk");
-    printf("=====================================================================================\n");
-    
-    if(mode == 1){ // Hanya akan memprint baris pertama
+    // Mode 1 akan memrpint baris pertama saja
+    // Mode 2 akan memprint seluruh baris
+    // Mode 3 akan memprint seluruh baris tapi kolom nama produk dan kode produk saja
+
+    if (mode == 1)  // Mode 1 akan memrpint baris pertama saja
+    {
         tempHarga = cursor->harga / 1000;
+        printf("=====================================================================================\n");
+        printf("| %-15s | %-15s | %-17s | %-10s | %-12s |\n", "Nama Produk", "Kategori", "Harga (satuan)", "Stock", "Kode Produk");
+        printf("=====================================================================================\n");
         printf("| %-15s | %-15s | Rp%-15.3f | %-10d | %-12s |\n", cursor->nama, cursor->kategori, tempHarga, cursor->stock, cursor->kodeProduk);
-    } else {    // Memprint semuanya
+        printf("-------------------------------------------------------------------------------------\n");
+    } else if (mode == 2)   // Mode 2 akan memprint seluruh baris
+    {
+        printf("=====================================================================================\n");
+        printf("| %-15s | %-15s | %-17s | %-10s | %-12s |\n", "Nama Produk", "Kategori", "Harga (satuan)", "Stock", "Kode Produk");
+        printf("=====================================================================================\n");
         while (cursor != NULL) {
             tempHarga = cursor->harga / 1000;
             printf("| %-15s | %-15s | Rp%-15.3f | %-10d | %-12s |\n", cursor->nama, cursor->kategori, tempHarga, cursor->stock, cursor->kodeProduk);
             cursor = cursor->next;
         }
+        printf("-------------------------------------------------------------------------------------\n");
+    } else if (mode == 3)   // Mode 3 akan memprint seluruh baris tapi kolom nama produk dan kode produk saja
+    {
+        printf("=====================================\n");
+        printf("| %-15s | %-15s |\n", "Nama Produk", "Kode Produk");
+        printf("=====================================\n");
+        while (cursor != NULL) {
+            tempHarga = cursor->harga / 1000;
+            printf("| %-15s | %-15s |\n", cursor->nama, cursor->kodeProduk);
+            cursor = cursor->next;
+        }
+        printf("-------------------------------------\n");
     }
-    
-    printf("-------------------------------------------------------------------------------------\n");
 }
 
 void printMenu() {
