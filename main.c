@@ -38,6 +38,7 @@ typedef struct nodec {
 typedef nodeP* productNode;
 typedef nodeC* customerNode;
 
+
 void bumperProgram();
 void printMenu();
 void printTabelProduk(productNode head, int mode);
@@ -62,11 +63,16 @@ int main() {
     customerNode customer = NULL;
     customerNode tempCustomer = NULL;
 
+<<<<<<< HEAD
     // Set seed untuk generator angka acak
     srand(time(0));
 
     int selectInt;
     char selectChar[50];
+=======
+    int selectHelp;
+    int select;
+>>>>>>> cc7a088fc4e3dbebac413cb1a2c05d0c2135bd75
     char tempNama[100];
     char tempKategori[100];
     int tempHarga;
@@ -88,6 +94,7 @@ int main() {
 
         switch (selectInt) {
             case 1: // Tambah Produk
+<<<<<<< HEAD
                 do {
                     printf("============= Input Produk =============\n");
                     printf("Nama Produk: ");
@@ -109,6 +116,20 @@ int main() {
                     scanf("%s", selectChar);
                     system("cls");
                 } while (strcasecmp(selectChar, "n") != 0);
+=======
+                printf("Nama Produk: ");
+                scanf("%s", tempNama);
+                printf("Kategori Produk: ");
+                scanf("%s", tempKategori);
+                printf("Harga: ");
+                scanf("%d", &tempHarga);
+                printf("Stock: ");
+                scanf("%d", &tempStock);
+                printf("Kode Produk (Format: xxx(K/A/O)mmyyyy) ");
+                scanf("%s", tempKodeProduk);
+                product = createLinkedList(product, tempNama, tempKategori, tempHarga, tempStock, tempKodeProduk);
+                printf("Data berhasil disimpan!\n");
+>>>>>>> cc7a088fc4e3dbebac413cb1a2c05d0c2135bd75
                 break;
 
             case 2: // Hapus Produk
@@ -240,9 +261,69 @@ int main() {
                 break;
 
             case 7: // Help
+<<<<<<< HEAD
                 helpMenu();
                 system("cls");
                 break;
+=======
+    printf("====================================\n");
+    printf("               HELP MENU\n");
+    printf("====================================\n");
+    printf("1. Informasi Tambah Produk\n");
+    printf("2. Informasi Hapus Produk\n");
+    printf("3. Informasi Catat Penjualan\n");
+    printf("4. Informasi Pencarian Produk\n");
+    printf("5. Informasi Laporan Produk saat ini\n");
+    printf("6. Informasi Laporan Penjualan\n");
+    printf("7. Informasi Help\n");
+    printf("0. Informasi Keluar aplikasi\n");
+    printf("====================================\n");
+    printf("Pilih opsi: ");
+    scanf("%d", &selectHelp);
+
+        switch (selectHelp) {
+
+            case 1: 
+            printf("Memilih menu ini akan menambahkan produk ke dalam gudang dengan meminta keterangan:\n");
+            printf("a. Nama produk\n");
+            printf("b. Kategori produk (Konsumsi/Aksesoris/Obat bebas)\n");
+            printf("c. Harga produk\n");
+            printf("d. Kode produk (format: xxx(K/A/O)mmyyyy):\n\n");
+            printf("-xxx: diisi angka untuk menandakan barang ke berapa yang telah masuk\n");
+            printf("-K/A/O untuk menandakan kategori produk,\n-K untuk konsumsi (makanan dan minuman),\n-A untuk Aksesoris (Peralatan dll),\n-O untuk Obat bebas (Obat batuk dll)\n");
+            printf("-mmyyyy untuk menandakan bulan dan tahun produk tersebut dimasukkan ke sistem\n\n");
+            break;
+
+            case 2:
+            printf("Menghapus produk dari sistem bila produk telah habis");
+            break;
+
+            case 3:
+            //belum
+            break;
+
+            case 4:
+            printf("Menu ini akan mencari produk berdasarkan nama dan menampilkan tabel");
+            break;
+
+            case 5:
+            printf("Menu ini akan menampilkan informasi terkait barang yang ada di gudang toko mulai dari:\n");
+            printf("a. Nama produk\n");
+            printf("b. Kategori produk\n");
+            printf("c. Harga satuan\n");
+            printf("d. Stock produk\n");
+            printf("e. Kode produk \n");
+
+            break;
+
+            case 6:
+            //belom
+            break;
+            
+
+        }
+                break; //break switch main menu awas ketuker
+>>>>>>> cc7a088fc4e3dbebac413cb1a2c05d0c2135bd75
 
             case 0: // Keluar Aplikasi
                 printf("Keluar aplikasi. Terima kasih!\n");
@@ -610,7 +691,7 @@ nodeP* removeProduct(productNode head, productNode temp)
             back->next = NULL;
 
         if(cursor == head)
-            head == NULL;
+            head = NULL;
 
         free(cursor);
 
