@@ -1,0 +1,26 @@
+Daia
+cuci
+20000
+80
+KB012
+
+Sawit
+minya
+18000
+90
+MK001
+
+Ayam
+Pokok
+50000
+10
+ASGQ2
+
+
+   char produk[10];
+    int kodeTransaksi;
+    int totalHarga;
+    int kuantitasProduk;
+
+
+nodeC* createLinkedListCustomer(customerNode head, char *produk, int kodeTransaksi, int totalHarga, int kuantitasProduk);
